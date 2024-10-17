@@ -9,6 +9,7 @@ import (
 	"time"
 
 	_ "gin-vue/docs"
+	"gin-vue/global"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -57,10 +58,11 @@ func InitRounter() {
 		Handler: r,
 	}
 
+	// start server
 	go func() {
+		global.Logger.Infof("Start Server: http://127.0.0.1:%s", stPort)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			// todo: log error
-			fmt.Println(fmt.Sprintf("Start Server Error: %s", err.Error()))
+			global.Logger.Errorf("Start Server Error: %s", err.Error())
 			return
 		}
 	}()
@@ -71,11 +73,10 @@ func InitRounter() {
 	defer cancelShutdown()
 
 	if err := server.Shutdown(ctx); err != nil {
-		// todo: log error
-		fmt.Println(fmt.Sprintf("Shutdown Server Error: %s", err.Error()))
+		global.Logger.Errorf("Shutdown Server Error: %s", err.Error())
 		return
 	}
-
+	global.Logger.Info("Shutdown Server Success")
 	fmt.Println("Shutdown Server Success")
 
 }

@@ -1,2 +1,9 @@
+mode:
+  develop: true
 server:
   port: 8090
+
+log:
+  MaxSize: 1
+  MaxBackups: 10
+  MaxAge: 30
