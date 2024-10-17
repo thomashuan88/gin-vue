@@ -15,7 +15,7 @@ func InitLogger() *zap.SugaredLogger {
 	if !viper.GetBool("mode.develop") {
 		logMode = zapcore.InfoLevel
 	}
-	core := zapcore.NewCore(getEncoder(), getWriterSyncer(), logMode)
+	core := zapcore.NewCore(getEncoder(), zapcore.NewMultiWriteSyncer(getWriterSyncer(), zapcore.AddSync(os.Stdout)), logMode)
 	return zap.New(core).Sugar()
 }
 
