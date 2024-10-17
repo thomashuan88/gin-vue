@@ -8,8 +8,12 @@ import (
 	"syscall"
 	"time"
 
+	_ "gin-vue/docs"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type IFnRegistRoute = func(rgPublic *gin.RouterGroup, rgAuth *gin.RouterGroup)
@@ -40,6 +44,9 @@ func InitRounter() {
 		fnRegistRoute(rgPublic, rgAuth)
 	}
 
+	// integrate swagger
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	stPort := viper.GetString("server.port")
 	if stPort == "" {
 		stPort = "8999"
@@ -56,7 +63,6 @@ func InitRounter() {
 			fmt.Println(fmt.Sprintf("Start Server Error: %s", err.Error()))
 			return
 		}
-		fmt.Println(fmt.Sprintf("Start Server Listen: %s", stPort))
 	}()
 
 	<-ctx.Done()
