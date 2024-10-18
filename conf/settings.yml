@@ -11,6 +11,10 @@ db:
 redis:
   url: localhost:6379
 
+jwt:
+  tokenExpire: 30 # token expire (minutes)
+  secretKey: "qwerqw"
+
 log:
   MaxSize: 1
   MaxBackups: 10
