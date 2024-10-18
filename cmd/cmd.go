@@ -21,6 +21,14 @@ func Start() {
 	}
 	global.DB = db
 
+	// init redis
+	rdClient, err := conf.InitRedis()
+	if err != nil {
+		initErr = utils.AppendError(initErr, err)
+	}
+	global.RedisClient = rdClient
+
+	// verify any error when initialize, and panic
 	if initErr != nil {
 		if global.Logger != nil {
 			global.Logger.Error(initErr.Error())

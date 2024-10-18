@@ -8,6 +8,9 @@ db:
   maxIdleConns: 10
   maxOpenConns: 100
 
+redis:
+  url: localhost:6379
+
 log:
   MaxSize: 1
   MaxBackups: 10
