@@ -9,3 +9,8 @@ go get -u github.com/swaggo/files
 
 go get -u go.uber.org/zap
 go get -u gopkg.in/natefinch/lumberjack.v2
+
+go get -u gorm.io/gorm
+go get -u gorm.io/driver/mysql
+
+go get -u github.com/redis/go-redis/v9

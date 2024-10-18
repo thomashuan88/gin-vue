@@ -3,6 +3,11 @@ mode:
 server:
   port: 8090
 
+db:
+  dns: "thomas:huan1122@tcp(127.0.0.1:3306)/currency_exchange?charset=utf8mb4&parseTime=True&loc=Local"
+  maxIdleConns: 10
+  maxOpenConns: 100
+
 log:
   MaxSize: 1
   MaxBackups: 10
