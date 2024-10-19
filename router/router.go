@@ -12,6 +12,8 @@ import (
 	"gin-vue/global"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -39,7 +41,10 @@ func InitRounter() {
 	rgPublic := r.Group("/api/v1/public")
 	rgAuth := r.Group("/api/v1")
 
-	InitBasePlatformRoutes()
+	initBasePlatformRoutes()
+
+	// register custom validator
+	registCustValidator()
 
 	for _, fnRegistRoute := range gfnRoutes {
 		fnRegistRoute(rgPublic, rgAuth)
@@ -81,6 +86,19 @@ func InitRounter() {
 
 }
 
-func InitBasePlatformRoutes() {
+func initBasePlatformRoutes() {
 	InitUserRoutes()
+}
+
+// ! register custom validator
+func registCustValidator() {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		_ = v.RegisterValidation("first_is_a", func(fl validator.FieldLevel) bool {
+			if val, ok := fl.Field().Interface().(string); ok {
+				// first letter must be a
+				return val != "" && val[0] == 'a'
+			}
+			return false
+		})
+	}
 }
