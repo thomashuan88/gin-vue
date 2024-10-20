@@ -18,8 +18,8 @@ type BaseApi struct {
 	Logger *zap.SugaredLogger
 }
 
-func NewBaseApi() *BaseApi {
-	return &BaseApi{
+func NewBaseApi() BaseApi {
+	return BaseApi{
 		Logger: global.Logger,
 	}
 }
@@ -45,9 +45,9 @@ func (b *BaseApi) BuildRequest(option BuildRequestOption) *BaseApi {
 		}
 
 		if errResult != nil {
-			errResult = b.ParseValidateErrors(errResult.(validator.ValidationErrors), option.DTO)
+			errResult = b.ParseValidateErrors(errResult, option.DTO)
 			b.AddError(errResult)
-			Fail(b.Ctx, ResponseJson{
+			b.Fail(ResponseJson{
 				Msg: b.GetError().Error(),
 			})
 		}
@@ -64,13 +64,17 @@ func (b *BaseApi) GetError() error {
 	return b.Errors
 }
 
-func (b *BaseApi) ParseValidateErrors(errs validator.ValidationErrors, target any) error {
-
+func (b *BaseApi) ParseValidateErrors(errs error, target any) error {
 	var errResult error
+
+	errValidation, ok := errs.(validator.ValidationErrors) // type assertion
+	if !ok {
+		return errs
+	}
 
 	// from reflection gain the pointer type of target
 	fields := reflect.TypeOf(target).Elem()
-	for _, fieldErr := range errs {
+	for _, fieldErr := range errValidation {
 
 		field, _ := fields.FieldByName(fieldErr.Field())
 		// return fieldErr.Field() & field
@@ -94,4 +98,16 @@ func (b *BaseApi) ParseValidateErrors(errs validator.ValidationErrors, target an
 	}
 
 	return errResult
+}
+
+func (b *BaseApi) Fail(resp ResponseJson) {
+	Fail(b.Ctx, resp)
+}
+
+func (b *BaseApi) OK(resp ResponseJson) {
+	OK(b.Ctx, resp)
+}
+
+func (b *BaseApi) ServerFail(resp ResponseJson) {
+	ServerFail(b.Ctx, resp)
 }

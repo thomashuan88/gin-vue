@@ -33,20 +33,12 @@ func NewUserApi() UserApi {
 // @Router /api/v1/public/user/login [post]
 func (u UserApi) Login(c *gin.Context) {
 	var iUserLoginDTO dto.UserLoginDTO
-	errs := c.ShouldBind(&iUserLoginDTO)
-	fmt.Printf("iUserLoginDTO: %+v\n", iUserLoginDTO)
-	if errs != nil {
-		Fail(c, ResponseJson{
-			Msg: parseValidateErrors(errs.(validator.ValidationErrors), &iUserLoginDTO).Error(),
-		})
+
+	if err := u.BuildRequest(BuildRequestOption{Ctx: c, DTO: &iUserLoginDTO}).GetError(); err != nil {
 		return
 	}
 
-	if err := u.BuildRequest({Ctx: c, DTO: &iUserLoginDTO}).GetError(); err != nil {
-		return
-	}
-
-	OK(c, ResponseJson{
+	u.OK(ResponseJson{
 		Data: iUserLoginDTO,
 	})
 
