@@ -12,10 +12,13 @@ import (
 )
 
 type UserApi struct {
+	BaseApi
 }
 
 func NewUserApi() UserApi {
-	return UserApi{}
+	return UserApi{
+		BaseApi: NewBaseApi(),
+	}
 }
 
 // @Summary login
@@ -28,26 +31,30 @@ func NewUserApi() UserApi {
 // @Success 200 {string} string "login success"
 // @Failure 401 {string} string "login fail"
 // @Router /api/v1/public/user/login [post]
-func (u UserApi) Login(ctx *gin.Context) {
+func (u UserApi) Login(c *gin.Context) {
 	var iUserLoginDTO dto.UserLoginDTO
-	errs := ctx.ShouldBind(&iUserLoginDTO)
+	errs := c.ShouldBind(&iUserLoginDTO)
 	fmt.Printf("iUserLoginDTO: %+v\n", iUserLoginDTO)
 	if errs != nil {
-		Fail(ctx, ResponseJson{
+		Fail(c, ResponseJson{
 			Msg: parseValidateErrors(errs.(validator.ValidationErrors), &iUserLoginDTO).Error(),
 		})
 		return
 	}
 
-	OK(ctx, ResponseJson{
+	if err := u.BuildRequest({Ctx: c, DTO: &iUserLoginDTO}).GetError(); err != nil {
+		return
+	}
+
+	OK(c, ResponseJson{
 		Data: iUserLoginDTO,
 	})
 
-	// OK(ctx, ResponseJson{
+	// OK(c, ResponseJson{
 	// 	Msg: "Login Success",
 	// })
 
-	// Fail(ctx, ResponseJson{
+	// Fail(c, ResponseJson{
 	// 	Code: 9001,
 	// 	Msg:  "Login Fail",
 	// })
