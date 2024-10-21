@@ -1,23 +1,22 @@
 package api
 
 import (
-	"errors"
-	"fmt"
+	"gin-vue/service"
 	"gin-vue/service/dto"
 	"gin-vue/utils"
-	"reflect"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type UserApi struct {
 	BaseApi
+	Service *service.UserService
 }
 
 func NewUserApi() UserApi {
 	return UserApi{
 		BaseApi: NewBaseApi(),
+		Service: service.NewUserService(),
 	}
 }
 
@@ -38,8 +37,21 @@ func (u UserApi) Login(c *gin.Context) {
 		return
 	}
 
+	iUser, err := u.Service.Login(iUserLoginDTO)
+	if err != nil {
+		u.Fail(ResponseJson{
+			Msg: err.Error(),
+		})
+		return
+	}
+
+	token, _ := utils.GenerateToken(iUser.ID, iUser.Name)
+
 	u.OK(ResponseJson{
-		Data: iUserLoginDTO,
+		Data: gin.H{
+			"token": token,
+			"user":  iUser,
+		},
 	})
 
 	// OK(c, ResponseJson{
@@ -51,36 +63,4 @@ func (u UserApi) Login(c *gin.Context) {
 	// 	Msg:  "Login Fail",
 	// })
 
-}
-
-func parseValidateErrors(errs validator.ValidationErrors, target any) error {
-
-	var errResult error
-
-	// from reflection gain the pointer type of target
-	fields := reflect.TypeOf(target).Elem()
-	for _, fieldErr := range errs {
-
-		field, _ := fields.FieldByName(fieldErr.Field())
-		// return fieldErr.Field() & field
-		// return errors.New(fmt.Sprintf("%s: %s Error", fieldErr.Field(), fieldErr.Tag()))
-
-		errMessageTag := fmt.Sprintf("%s_err", fieldErr.Tag())
-
-		errMessage := field.Tag.Get(errMessageTag)
-		// return errors.New(errMessage + " hh")
-		if errMessage != "" {
-			errMessage = field.Tag.Get("message")
-		}
-		// return errors.New(errMessage + " hhh")
-		if errMessage == "" {
-			errMessage = fmt.Sprintf("%s: %s Error", fieldErr.Field(), fieldErr.Tag())
-		}
-
-		// if utils.AppendError(errResult, errors.New(errMessage)) no return value to errResult,
-		// like this will cause runtime error: invalid memory address
-		errResult = utils.AppendError(errResult, errors.New(errMessage))
-	}
-
-	return errResult
 }
