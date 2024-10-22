@@ -10,6 +10,7 @@ import (
 
 	_ "gin-vue/docs"
 	"gin-vue/global"
+	"gin-vue/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -37,6 +38,7 @@ func InitRounter() {
 	defer cancelCtx()
 
 	r := gin.Default()
+	r.Use(middleware.Cors())
 
 	rgPublic := r.Group("/api/v1/public")
 	rgAuth := r.Group("/api/v1")
