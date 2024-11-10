@@ -15,6 +15,13 @@ jwt:
   tokenExpire: 30 # token expire (minutes)
   secretKey: "qwerqw"
 
+ansible:
+  user:
+    name: root
+    password: pass123
+  ShutdownHost:
+    Args: "poweroff"
+
 log:
   MaxSize: 1
   MaxBackups: 10

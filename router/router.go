@@ -90,6 +90,7 @@ func InitRounter() {
 
 func initBasePlatformRoutes() {
 	InitUserRoutes()
+	InitHostRoutes()
 }
 
 // ! register custom validator
