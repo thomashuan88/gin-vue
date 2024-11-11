@@ -31,7 +31,7 @@ func (h *HostService) Shutdown(iShutdownHostDTO dto.ShutdownHostDTO) error {
 
 	ansibleConnectionOptions := &options.AnsibleConnectionOptions{
 		Connection: "ssh",
-		User:       viper.GetString("ansible.user"),
+		User:       viper.GetString("ansible.user.name"),
 	}
 
 	ansibleAdhocOptions := &adhoc.AnsibleAdhocOptions{
@@ -39,7 +39,7 @@ func (h *HostService) Shutdown(iShutdownHostDTO dto.ShutdownHostDTO) error {
 		ModuleName: "command",
 		Args:       viper.GetString("ansible.ShutdownHost.Args"),
 		ExtraVars: map[string]any{
-			"ansible_password": viper.GetString("ansible.password"),
+			"ansible_password": viper.GetString("ansible.user.password"),
 		},
 	}
 

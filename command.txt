@@ -18,3 +18,6 @@ go get -u github.com/redis/go-redis/v9
 go get -u github.com/golang-jwt/jwt/v5
 
 go get -u github.com/gin-contrib/cors
+
+
+go get -u github.com/apenella/go-ansible@v1.1.7

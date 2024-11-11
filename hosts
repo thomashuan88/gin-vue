@@ -1,0 +1,2 @@
+[myhosts]
+172.22.0.2 ansible_user=root ansible_password=pass123

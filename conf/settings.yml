@@ -20,7 +20,7 @@ ansible:
     name: root
     password: pass123
   ShutdownHost:
-    Args: "poweroff"
+    Args: "`cat \"hello\" >> /hello.txt`"
 
 log:
   MaxSize: 1
