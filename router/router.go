@@ -39,6 +39,7 @@ func InitRounter() {
 
 	r := gin.Default()
 	r.Use(middleware.Cors())
+	r.Use(middleware.NoCacheMiddleware())
 
 	rgPublic := r.Group("/api/v1/public")
 	rgAuth := r.Group("/api/v1")

@@ -8,6 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	ERR_CODE_ADD_USER       = 10011
+	ERR_CODE_GET_USER_BY_ID = 10012
+)
+
 type UserApi struct {
 	BaseApi
 	Service *service.UserService
@@ -63,4 +68,44 @@ func (u UserApi) Login(c *gin.Context) {
 	// 	Msg:  "Login Fail",
 	// })
 
+}
+
+func (u UserApi) AddUser(c *gin.Context) {
+	var iUserAddDTO dto.UserAddDTO
+
+	if err := u.BuildRequest(BuildRequestOption{Ctx: c, DTO: &iUserAddDTO}).GetError(); err != nil {
+		return
+	}
+
+	if err := u.Service.AddUser(&iUserAddDTO); err != nil {
+		u.ServerFail(ResponseJson{
+			Code: ERR_CODE_ADD_USER,
+			Msg:  err.Error(),
+		})
+	}
+
+	u.OK(ResponseJson{
+		Data: iUserAddDTO,
+	})
+}
+
+func (u UserApi) GetUserById(c *gin.Context) {
+	var iCommonIDDTO dto.CommonIDDTO
+
+	if err := u.BuildRequest(BuildRequestOption{Ctx: c, DTO: &iCommonIDDTO, BindParamsFromUri: true}).GetError(); err != nil {
+		return
+	}
+
+	iUser, err := u.Service.GetUserById(&iCommonIDDTO)
+	if err != nil {
+		u.ServerFail(ResponseJson{
+			Code: ERR_CODE_GET_USER_BY_ID,
+			Msg:  err.Error(),
+		})
+		return
+	}
+
+	u.OK(ResponseJson{
+		Data: iUser,
+	})
 }

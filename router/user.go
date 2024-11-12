@@ -17,20 +17,7 @@ func InitUserRoutes() {
 
 		rgAuthUser := rgAuth.Group("/user")
 		{
-			rgAuthUser.GET("", func(c *gin.Context) {
-				c.AbortWithStatusJSON(200, gin.H{
-					"data": []map[string]any{
-						{"id": 1, "name": "admin"},
-						{"id": 2, "name": "user"},
-					},
-				})
-			})
-
-			rgAuthUser.GET("/:id", func(c *gin.Context) {
-				c.AbortWithStatusJSON(200, gin.H{
-					"data": map[string]any{"id": 1, "name": "admin"},
-				})
-			})
+			rgAuthUser.POST("", userApi.AddUser)
 		}
 
 	})
